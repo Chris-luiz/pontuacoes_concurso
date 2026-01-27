@@ -1,30 +1,40 @@
 {% extends "core/base.html" %}
 
+{% load dict_extras %}
+
 {% block content %}
 
 <div class="is-flex is-justify-content-space-between is-align-items-center">
     <h1 class="title">{{ model.id }} | {{ model.nome }}</h1>
 
     <div class="is-flex is-gap-2">
-        <a class="button is-primary" href="/provas/criar-materia/{{ model.id }}">Adicionar Matéria</a>
+        <a class="button has-background-primary" href="/provas/criar-materia/{{ model.id }}">Adicionar Matéria</a>
         <a class="button is-link" href="/provas">Voltar</a>
     </div>
 </div>
 
-<table class="table ">
-    <thead>
-        <tr>
-            <th>Nome</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for materia in materias %}
-        <tr class="is-light">
-            <td>{{ materia.nome }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% for materia in materias %}
+
+<h2 class="subtitle pl-2">{{ materia.nome }}</h2>
+
+<div class="is-flex is-gap-4">
+    {% for questao in materia.questao_set.all %}
+    <div class="box is-flex is-justify-content-center is-align-items-center p-2 {% if questao.valor %} has-background-primary {% else %} has-background-danger {% endif %}">
+        {{ questao.numero }}:
+        {% if questao.valor %} Acertou {% else %} Errou {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<p>Total: {{ totais|get_item:materia.nome }} Pontos</p>
+
+<br>
+
+{% endfor %}
+
+<h3 class="has-text-centered is-size-3 has-text-weight-bold {% if totais|get_item:"total" > 48 %} has-text-primary {% else %} has-text-danger {% endif %}">
+    Nota Final: {{ totais|get_item:"total" }} Pontos
+</h3>
 
 
 {{ model.data }}

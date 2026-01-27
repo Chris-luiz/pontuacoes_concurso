@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from .models import Prova, Materia
+from .models import Prova, Materia, Questao
 from .forms import ProvaForm, MateriaForm
 
 def provas(request):
@@ -29,11 +29,13 @@ def criarProva(request):
 def verProva(request, id):
     
     model = Prova.objects.filter(id = id).first()
-    materias = Materia.objects.filter(prova_fk = id)
+    materias = Materia.objects.filter(prova_fk=id).prefetch_related('questao_set')
+    totais = model.obterTotais()
     
     return render(request, 'core/ver_prova.html', {
         'model': model,
-        'materias': materias
+        'materias': materias,
+        'totais': totais
     })
     
 def criarMateria(request, id):
@@ -52,7 +54,33 @@ def criarMateria(request, id):
     return render(request, 'core/criar_materia.html', {
         'form': form
     })
-
+    
+    
+def carga(request):
+ 
+    prova = Prova.objects.filter(nome="CGM").first()
+    
+    provaModel = Prova()
+    
+    
+    for key, item in provaModel.QUESTOES.items():
+        
+        materiaModel = Materia()
+        materiaModel.nome = key
+        materiaModel.prova_fk_id = prova.id
+        materiaModel.save()
+        
+        for numero, valor in item.items():
+            questao = Questao()
+            questao.numero = numero
+            questao.valor = valor
+            questao.materia_fk_id = materiaModel.id
+            questao.save()        
+        
+    return HttpResponse('Funcionou')
+    
+       
+    
 def cgm(request):
     
     prova = Prova()
