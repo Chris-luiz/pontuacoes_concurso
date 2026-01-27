@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Meu Sistema de Provas{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <nav>
+            <a class="button is-link" href="/provas">Lista de Provas</a> |
+            <a class="button is-link" href="/provas/criar">Criar Nova Prova</a>
+        </nav>
+        <hr>
+        {% block content %}
+        {% endblock %}
+        
+        <footer>
+            <p>&copy; 2026 - Sistema CGM</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>

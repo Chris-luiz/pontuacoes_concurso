@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="is-flex is-justify-content-space-between is-align-items-center">
+    <h1 class="title">{{ model.id }} | {{ model.nome }}</h1>
+
+    <div class="is-flex is-gap-2">
+        <a class="button is-primary" href="/provas/criar-materia/{{ model.id }}">Adicionar Matéria</a>
+        <a class="button is-link" href="/provas">Voltar</a>
+    </div>
+</div>
+
+<table class="table ">
+    <thead>
+        <tr>
+            <th>Nome</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for materia in materias %}
+        <tr class="is-light">
+            <td>{{ materia.nome }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{{ model.data }}
+
+{% endblock %}

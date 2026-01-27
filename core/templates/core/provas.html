@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<button></button>
+
+<table class="table is-bordered ">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Data</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for prova in provas %}
+        <tr class="is-light">
+            <td>{{ prova.id }}</td>
+            <td>{{ prova.nome }}</td>
+            <td>{{ prova.data }}</td>
+            <td>
+                <a class="button is-primary" href="/provas/ver/{{ prova.id }}">Ver</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

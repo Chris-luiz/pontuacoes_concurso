@@ -1,0 +1,136 @@
+{% load dict_extras %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+
+        body {
+            background: #f5f7fa;
+        }
+
+
+        .container {
+            background: #ffffff;
+            border-radius: 12px;
+            margin: 40px auto;
+            padding: 24px;
+            max-width: 1100px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+
+        h2 {
+            margin: 24px 0 12px;
+            color: #1f2937;
+            border-left: 4px solid #2563eb;
+            padding-left: 8px;
+            font-size: 1.2rem;
+        }
+
+
+        .flex {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+
+        .block {
+            height: 42px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: default;
+        }
+
+
+        .block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        }
+
+
+        .acerto {
+            background: #22c55e;
+            color: #ffffff;
+        }
+
+
+        .erro {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+
+        p {
+            margin: 6px 0 16px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+
+        h3 {
+            margin-top: 24px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+
+        .texto-acerto {
+            color: #16a34a;
+        }
+
+
+        .texto-erro {
+            color: #dc2626;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        {% for materia, questoes in prova.obterQuestoes.items %}
+
+        <h2>{{ materia }}</h2>
+
+        <div class="flex">
+            {% for questao, valor in questoes.items %}
+            <div class="block {% if valor %} acerto {% else %} erro {% endif %}">
+                {{ questao }}:
+                {% if valor %} Acertou {% else %} Errou {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <p>Total: {{ totais|get_item:materia }} Pontos</p>
+
+        <br>
+
+        {% endfor %}
+
+        <h3 class="{% if totais|get_item:"total" > 48 %} texto-acerto {% else %} texto-erro {% endif %}">
+            Nota Final: {{ totais|get_item:"total" }} Pontos
+        </h3>
+    </div>
+
+</body>
+
+</html>

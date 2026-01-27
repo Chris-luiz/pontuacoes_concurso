@@ -1,0 +1,11 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ model }}
+    <input class="button is-primary" type="submit" value="Enviar">
+</form>
+
+{% endblock %}
