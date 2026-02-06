@@ -5,38 +5,57 @@
 {% block content %}
 
 <div class="is-flex is-justify-content-space-between is-align-items-center">
-    <h1 class="title">{{ model.id }} | {{ model.nome }}</h1>
+    <div>
+        <h1 class="title">Prova: {{ model.id }} | {{ model.nome }}</h1>
+        <p class="subtitle">Realizada em {{ model.data }} </p>
+    </div>
 
     <div class="is-flex is-gap-2">
-        <a class="button is-primary" href="/provas/ver_materias/{{ model.id }}">Ver Matérias</a>
         <a class="button is-default" href="/provas">Voltar</a>
+        <a class="button is-primary" href="/provas/ver_materias/{{ model.id }}">Ver Matérias</a>
     </div>
 </div>
 
-{% for materia in materias %}
-
-<h2 class="subtitle pl-2">{{ materia.nome }}</h2>
-
-<div class="is-flex is-gap-4">
-    {% for questao in materia.questao_set.all %}
-    <div class="box is-flex is-justify-content-center is-align-items-center p-2 {% if questao.valor %} has-background-primary {% else %} has-background-danger {% endif %}">
-        {{ questao.numero }}:
-        {% if questao.valor %} Acertou {% else %} Errou {% endif %}
+<div class="card mt-4 is-shadowless has-border">
+    <div class="card-header">
+        <div class="card-header-title">
+            Painel de Pontuação
+        </div>
     </div>
-    {% endfor %}
+    <div class="card-content">
+
+        {% for materia in materias %}
+        <div class="card is-shadowless has-border">
+            <div class="card-header is-shadowless has-border">
+                <div class="card-header-title">
+                   {{ materia.nome }}
+                </div>
+            </div>
+
+            <div class="card-content">
+                <div class="is-flex is-gap-4 is-flex-wrap-wrap">
+                    {% for questao in materia.questao_set.all %}
+                    <div class="box is-shadowless has-border is-flex is-justify-content-center is-align-items-center p-2 {% if questao.valor %} has-background-primary {% else %} has-background-danger {% endif %}">
+                        {{ questao.numero }}:
+                        {% if questao.valor %} Acertou {% else %} Errou {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <footer class="card-footer has-background-light p-2 mt-2">
+                <p>Total: {{ totais|get_item:materia.nome }} Pontos</p>
+            </footer>
+        </div>
+        {% endfor %}
+
+    </div>
+   
 </div>
-
-<p>Total: {{ totais|get_item:materia.nome }} Pontos</p>
-
-<br>
-
-{% endfor %}
 
 <h3 class="has-text-centered is-size-3 has-text-weight-bold {% if totais|get_item:"total" > 48 %} has-text-primary {% else %} has-text-danger {% endif %}">
     Nota Final: {{ totais|get_item:"total" }} Pontos
 </h3>
 
-
-{{ model.data }}
 
 {% endblock %}

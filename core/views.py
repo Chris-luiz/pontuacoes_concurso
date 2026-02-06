@@ -163,6 +163,7 @@ def verQuestao(request, materiaId):
 def adicionarQuestao(request, materiaId):
     
     form = QuestaoForm()
+    model = Materia.objects.filter(id=materiaId).first
     
     if request.method == 'POST':
         form = QuestaoForm(data=request.POST)
@@ -175,7 +176,8 @@ def adicionarQuestao(request, materiaId):
         
     
     return render(request, 'core/criar_questao.html', {
-        "form": form
+        "form": form,
+        "model": model,
     })
 
 def editarQuestao(request, id):
