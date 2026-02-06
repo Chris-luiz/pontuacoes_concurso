@@ -83,6 +83,20 @@ h3 {
 .texto-erro {
     color: #dc2626;
 } */
+:root {
+    --bulma-danger-h: 0 !important;
+    --bulma-danger-s: 84% !important;
+    --bulma-danger-l: 60% !important;
+
+    --bulma-primary-h: 142 !important;
+    --bulma-primary-s: 71% !important;
+    --bulma-primary-l: 45% !important;
+}
+
+.has-background-primary,
+.has-background-danger {
+    color: #fff !important;
+}
 
 .section {
     border-left: 4px solid #2563eb !important;
