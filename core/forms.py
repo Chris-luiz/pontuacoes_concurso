@@ -23,8 +23,9 @@ class MateriaForm(forms.ModelForm):
         
 class QuestaoForm(forms.ModelForm):
     numero = forms.CharField(widget=forms.TextInput(attrs={'class': 'input mb-4'}))
-    valor = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'input mb-4'}))
+    valor = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'checkbox mb-4'}), required=False)
     
     class Meta:
-        model: Questao
+        model = Questao
         fields = '__all__'
+        exclude = ['materia_fk']

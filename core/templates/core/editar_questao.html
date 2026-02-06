@@ -2,8 +2,8 @@
 
 {% block content %}
 
-<h1 class="title">Cadastrar Nova Matéria</h1>
-<p class="subtitle">Prova {{ prova.nome }} </p>
+<h1 class="title">Editar Questão</h1>
+<p class="subtitle">Questão: {{ model.numero }} </p>
 
 <div class="card">
     <div class="card-header">
@@ -11,11 +11,14 @@
             Preencha os campos abaixo
         </div>
     </div>
+
     <div class="card-content">
+
         <form action="" method="post">
             {% csrf_token %}
             {{ form }}
-            <a href="/provas/ver_materias/{{ prova.id }}" class="button is-default" type="submit" value="Enviar">Voltar</a>
+            <a href="/provas/ver_questoes/{{ model.materia_fk_id }}" class="button is-default" type="submit"
+                value="Enviar">Voltar</a>
             <input class="button is-primary" type="submit" value="Enviar">
         </form>
     </div>

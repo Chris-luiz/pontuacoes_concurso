@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
@@ -13,20 +13,36 @@
 </head>
 
 <body>
-    <div class="container">
-        <nav>
-            <a class="button is-link" href="/provas">Lista de Provas</a> |
-            <a class="button is-link" href="/provas/criar">Criar Nova Prova</a>
-        </nav>
-        <hr>
-        {% block content %}
-        {% endblock %}
-        
-        <footer>
-            <p>&copy; 2026 - Sistema CGM</p>
-        </footer>
+   <div class="columns is-gapless">
+
+        <!-- Sidebar -->
+        <aside class="column is-2 sidebar">
+            <aside class="menu">
+                <p class="menu-label">Menu</p>
+                <ul class="menu-list">
+                    <li><a href="/provas">Lista de Provas</a></li>
+                    <li><a href="/provas/criar">Cadastrar Nova Prova</a></li>
+                </ul>
+            </aside>
+        </aside>
+
+        <!-- Conteúdo principal -->
+        <div class="column content p-5">
+            <div class="container py-4">
+
+                {% block content %}
+                {% endblock %}
+
+                <footer class="mt-6">
+                    <p>&copy; <span id="current_year"></span>  - Meu Sistema de Provas</p>
+                </footer>
+            </div>
+        </div>
     </div>
 
+    <script>
+        document.querySelector('#current_year').innerHTML = (new Date()).getFullYear()
+    </script>
 </body>
 
 </html>

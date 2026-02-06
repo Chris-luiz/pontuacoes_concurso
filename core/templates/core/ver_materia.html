@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+<div class="is-flex is-justify-content-space-between mb-4 is-align-items-center">
+    <h2 class="title">Matérias da Prova  {{ prova.nome }} </h2>
+
+    <div class="is-flex is-gap-2">
+        <a class="button is-default" href="/provas/ver/{{ prova.id }}">Voltar</a>
+        <a class="button is-primary" href="/provas/criar-materia/{{ prova.id }}">Adicionar Matéria</a>
+    </div>
+</div>
+
+
+<table class="table is-bordered is-fullwidth">
+    <thead>
+        <tr>
+            <th class="is-light">Nome</th>
+            <th class="is-light has-text-centered">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for materia in materias %}
+        <tr>
+            <td> {{ materia.nome }} </td>       
+            <td class="has-text-centered">
+                <a href="/provas/ver_questoes/{{ materia.id }}" class="button is-primary">Ver Questões</a>
+                <a href="/provas/editar_materia/{{ materia.id }}" class="button is-default">Editar</a>
+                <a href="/provas/excluir_materia/{{ materia.id }}" class="button is-danger">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    
+</table>
+
+
+{% endblock %}

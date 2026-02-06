@@ -11,14 +11,16 @@
             Preencha os campos abaixo
         </div>
     </div>
+
     <div class="card-content">
         <form action="" method="post">
             {% csrf_token %}
             {{ form }}
-            <a href="/provas/ver_materias/{{ prova.id }}" class="button is-default" type="submit" value="Enviar">Voltar</a>
+            <a href="/provas/ver_materias/{{ model.prova_fk_id }}" class="button is-light" type="submit" value="Enviar">Voltar</a>
             <input class="button is-primary" type="submit" value="Enviar">
         </form>
     </div>
 </div>
+
 
 {% endblock %}

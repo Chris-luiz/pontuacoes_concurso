@@ -2,15 +2,16 @@
 
 {% block content %}
 
-<button></button>
+<h1 class="title">Provas Feitas</h1>
+<p class="subtitle">Aqui estão todas as provas de concurso que fiz</p>
 
-<table class="table is-bordered ">
+<table class="table is-bordered is-fullwidth">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Data</th>
-            <th>Ações</th>
+            <th class="is-light">ID</th>
+            <th class="is-light">Nome</th>
+            <th class="is-light">Data</th>
+            <th class="is-light has-text-centered">Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -19,8 +20,9 @@
             <td>{{ prova.id }}</td>
             <td>{{ prova.nome }}</td>
             <td>{{ prova.data }}</td>
-            <td>
-                <a class="button is-primary" href="/provas/ver/{{ prova.id }}">Ver</a>
+            <td class="has-text-centered">
+                <a class="button is-link" href="/provas/ver/{{ prova.id }}">Ver</a>
+                <a class="button is-default" href="/provas/editar_prova/{{ prova.id }}">Editar</a>
             </td>
         </tr>
         {% endfor %}

@@ -16,7 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import cgm, provas, criarProva, verProva, criarMateria, carga
+from .views import (
+    provas, criarProva, verProva, editarProva,
+    criarMateria, verMateria, editarMateria, excluirMateria, 
+    adicionarQuestao, verQuestao, editarQuestao, excluirQuestao,
+    cgm, carga,
+)
 
 
 urlpatterns = [
@@ -24,6 +29,17 @@ urlpatterns = [
     path('provas', provas),
     path('provas/criar/', criarProva),
     path('provas/ver/<int:id>', verProva),
+   
+    path('provas/ver_materias/<int:provaId>', verMateria),
+    path('provas/editar_prova/<int:id>', editarProva),
+    path('provas/editar_materia/<int:id>', editarMateria),
+    path('provas/excluir_materia/<int:id>', excluirMateria),
+    
+    path('provas/adicionar_questao/<int:materiaId>', adicionarQuestao),
+    path('provas/ver_questoes/<int:materiaId>', verQuestao),
+    path('provas/editar_questao/<int:id>', editarQuestao),
+    path('provas/excluir_questao/<int:id>', excluirQuestao),
+    
     path('carga/', carga),
     path('provas/criar-materia/<int:id>', criarMateria),
     path('cgm/', cgm)

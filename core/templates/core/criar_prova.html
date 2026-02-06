@@ -2,10 +2,21 @@
 
 {% block content %}
 
-<form action="" method="post">
-    {% csrf_token %}
-    {{ model }}
-    <input class="button is-primary" type="submit" value="Enviar">
-</form>
+<h1 class="title">Cadastrar Nova Prova</h1>
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-header-title">
+            Preencha os campos abaixo
+        </div>
+    </div>
+    <div class="card-content">
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ model }}
+            <input class="button is-primary" type="submit" value="Enviar">
+        </form>
+    </div>
+</div>
 
 {% endblock %}

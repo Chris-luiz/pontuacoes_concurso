@@ -1,0 +1,40 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+
+
+<div class="is-flex is-justify-content-space-between mb-2 is-align-items-center">
+    <h2 class="title">Matérias da Prova  {{ materia.nome }} </h2>
+
+    <div class="is-flex is-gap-2">
+        <a class="button is-default" href="/provas/ver_materias/{{ materia.prova_fk_id }}">Voltar</a>
+        <a class="button is-primary" href="/provas/adicionar_questao/{{ materia.id }}">Adicionar Questão</a>
+    </div>
+</div>
+
+
+<table class="table is-bordered is-fullwidth">
+    <thead>
+        <tr>
+            <th class="is-light">Número</th>
+            <th class="is-light has-text-centered">Valor</th>
+            <th class="is-light has-text-centered">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for questao in questoes %}
+        <tr>
+            <td> {{ questao.numero }} </td>       
+            <td class="has-text-centered"> <span class="tag {% if questao.valor %} is-primary {% else %} is-danger {% endif %}"> {% if questao.valor %} SIM {% else %} NÃO {% endif %} </span> </td>       
+            <td class="has-text-centered">
+                <a href="/provas/editar_questao/{{ questao.id }}" class="button is-default">Editar</a>
+                <a href="/provas/excluir_questao/{{ questao.id }}" class="button is-danger text-white">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    
+</table>
+
+
+{% endblock %}

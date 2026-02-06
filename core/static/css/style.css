@@ -80,6 +80,33 @@ h3 {
     color: #dc2626;
 } */
 
-h2 {
+.section {
     border-left: 4px solid #2563eb !important;
+}
+
+
+.menu {
+  /* position: sticky;
+  display: inline-block;
+  vertical-align: top;
+  max-height: 100vh;
+  overflow-y: auto;
+  top: 0;
+  width: 200px;
+  bottom: 0; */
+  padding: 10px;
+}
+
+.content {
+  display: inline-block;
+}
+
+.sidebar {
+    background-color: #fafafa;
+    border-right: 1px solid var(--bulma-border);
+    box-shadow: 1px 0 6px rgba(0, 0, 0, 0.06);
+    padding: 1rem;
+    height: 100vh;
+    position: sticky;
+    top: 0;
 }
