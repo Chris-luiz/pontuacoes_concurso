@@ -17,15 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import (
+    index,
     provas, criarProva, verProva, editarProva,
     criarMateria, verMateria, editarMateria, excluirMateria, 
-    adicionarQuestao, verQuestao, editarQuestao, excluirQuestao,
+    adicionarQuestao, verQuestao, editarQuestao, excluirQuestao, alternarValorQuestao,
     cgm, carga,
 )
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', index),
     path('provas', provas),
     path('provas/criar/', criarProva),
     path('provas/ver/<int:id>', verProva),
@@ -38,6 +40,8 @@ urlpatterns = [
     path('provas/adicionar_questao/<int:materiaId>', adicionarQuestao),
     path('provas/ver_questoes/<int:materiaId>', verQuestao),
     path('provas/editar_questao/<int:id>', editarQuestao),
+    path('provas/alternar_valor_questao/<int:id>', alternarValorQuestao),
+    
     path('provas/excluir_questao/<int:id>', excluirQuestao),
     
     path('carga/', carga),

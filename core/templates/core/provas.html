@@ -19,7 +19,7 @@
         <tr>
             <td>{{ prova.id }}</td>
             <td>{{ prova.nome }}</td>
-            <td>{{ prova.data }}</td>
+            <td>{{ prova.data|date:"d/m/Y" }}</td>
             <td class="has-text-centered">
                 <a class="button is-link" href="/provas/ver/{{ prova.id }}">Ver</a>
                 <a class="button is-default" href="/provas/editar_prova/{{ prova.id }}">Editar</a>

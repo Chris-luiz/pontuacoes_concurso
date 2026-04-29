@@ -1,7 +1,10 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from .models import Prova, Materia, Questao
 from .forms import ProvaForm, MateriaForm, QuestaoForm
+
+def index(request):
+    return HttpResponseRedirect("/provas")
 
 def provas(request):
     
@@ -42,9 +45,7 @@ def editarProva(request, id):
     return render(request, 'core/editar_prova.html', {
         "form": form,
         "prova": model,
-    })
-    
-    
+    }) 
     
 def verProva(request, id):
     
@@ -77,7 +78,6 @@ def criarMateria(request, id):
         'prova': prova,
     })
     
-    
 def carga(request):
  
     prova = Prova.objects.filter(nome="CGM").first()
@@ -99,9 +99,7 @@ def carga(request):
             questao.materia_fk_id = materiaModel.id
             questao.save()        
 
-    return HttpResponse('Funcionou')
-    
-       
+    return HttpResponse('Funcionou')   
     
 def cgm(request):
     
@@ -112,8 +110,6 @@ def cgm(request):
         "prova": prova,
         "totais": totais
     })
-    
-
 
 def verMateria(request, provaId):
     
@@ -150,7 +146,6 @@ def excluirMateria(request, id):
     
     return HttpResponseRedirect(f"/provas/ver_materias/{model.prova_fk_id}")
     
-    
 def verQuestao(request, materiaId):
     materia = Materia.objects.filter(id=materiaId).first()
     questoes = Questao.objects.filter(materia_fk=materiaId).all()
@@ -163,16 +158,33 @@ def verQuestao(request, materiaId):
 def adicionarQuestao(request, materiaId):
     
     form = QuestaoForm()
-    model = Materia.objects.filter(id=materiaId).first
+    model = Materia.objects.filter(id=materiaId).first()
     
     if request.method == 'POST':
         form = QuestaoForm(data=request.POST)
-        
+            
         if form.is_valid():
-            form = form.save(commit=False)
-            form.materia_fk_id = materiaId
-            form.save()
-            return HttpResponseRedirect(f"/provas/ver_questoes/{form.materia_fk_id}")
+            
+            marcarVarios = request.POST.get('criar_varios')
+            
+            if marcarVarios:
+                de = int(request.POST.get('de'))
+                ate = int(request.POST.get('ate'))
+                
+                for i in range(de, ate+1):
+                    model = form.save(commit=False)
+                    model.pk = None
+                    model.numero = i
+                    model.materia_fk_id = materiaId
+                    model.save()
+                    print(model.numero)
+                    print(i)
+                
+            else:
+                model = form.save(commit=False)
+                model.materia_fk_id = materiaId
+                model.save()
+            return HttpResponseRedirect(f"/provas/ver_questoes/{materiaId}")
         
     
     return render(request, 'core/criar_questao.html', {
@@ -196,6 +208,28 @@ def editarQuestao(request, id):
     return render(request, 'core/editar_questao.html', {
         "form": form,
         "model": model
+    })
+
+def alternarValorQuestao(request, id):
+    
+    if not id:
+        return JsonResponse({
+            "status": False
+        })
+        
+    questao = Questao.objects.filter(id=id).first()
+    if not questao:
+        return JsonResponse({
+            "status": False
+        })
+        
+    questao.valor = False if questao.valor else True
+    questao.save()
+    
+    return JsonResponse({
+        "status": True,
+        "questaoId": questao.id,
+        "valor": questao.valor
     })
 
 def excluirQuestao(request, id):

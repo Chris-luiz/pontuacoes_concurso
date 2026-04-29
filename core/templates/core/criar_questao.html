@@ -1,7 +1,8 @@
 {% extends "core/base.html" %}
 
-{% block content %}
+{% load static %}
 
+{% block content %}
 
 <h1 class="title">Criar Questão </h1>
 <p class="subtitle">pagina de criação de questão</p>
@@ -16,11 +17,29 @@
         <form action="" method="post">
             {% csrf_token %}
             {{ form }}
-            
-            <a href="/provas/ver_questoes/{{ model.id }}" class="button is-default" type="submit" value="Enviar">Voltar</a>
+
+            <div>
+                <label for="id_criar_varios">Criar varios:</label>
+                <input type="checkbox" name="criar_varios" class="checkbox mb-4" id="id_criar_varios">
+            </div>
+
+            <div class="is-hidden">
+                <label for="id_de">De:</label>
+                <input type="number" name="de" class="input mb-4" id="id_de">
+            </div>
+
+            <div class="is-hidden">
+                <label for="id_ate">Ate:</label>
+                <input type="number" name="ate" class="input mb-4" id="id_ate">
+            </div>
+
+            <a href="/provas/ver_questoes/{{ model.id }}" class="button is-default" type="submit"
+                value="Enviar">Voltar</a>
             <input class="button is-primary" type="submit" value="Enviar">
         </form>
     </div>
 </div>
+
+<script src="{% static 'js/show-criar-varios.js' %}"></script>
 
 {% endblock %}

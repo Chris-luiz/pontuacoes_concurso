@@ -2,8 +2,7 @@ from django import forms
 from .models import Prova, Materia, Questao
 
 class ProvaForm(forms.ModelForm):
-    nome = forms.CharField(widget=forms.TextInput(attrs={'class': 'input mb-4'}))
-        
+    nome = forms.CharField(widget=forms.TextInput(attrs={'class': 'input mb-4'}))  
     data = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'input mb-4'}, format='%Y-%m-%d'),
         input_formats=['%Y-%m-%d', '%d/%m/%Y'],
@@ -22,7 +21,7 @@ class MateriaForm(forms.ModelForm):
         exclude = ['prova_fk']
         
 class QuestaoForm(forms.ModelForm):
-    numero = forms.CharField(widget=forms.TextInput(attrs={'class': 'input mb-4'}))
+    numero = forms.CharField(widget=forms.TextInput(attrs={'class': 'input mb-4', 'autofocus': True}))
     valor = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'checkbox mb-4'}), required=False)
     
     class Meta:

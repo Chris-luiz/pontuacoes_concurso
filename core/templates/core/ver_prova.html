@@ -7,7 +7,7 @@
 <div class="is-flex is-justify-content-space-between is-align-items-center">
     <div>
         <h1 class="title">Prova: {{ model.id }} | {{ model.nome }}</h1>
-        <p class="subtitle">Realizada em {{ model.data }} </p>
+        <p class="subtitle">Realizada em {{ model.data|date:"d/m/Y" }} </p>
     </div>
 
     <div class="is-flex is-gap-2">
@@ -28,7 +28,7 @@
         <div class="card is-shadowless has-border">
             <div class="card-header is-shadowless has-border">
                 <div class="card-header-title">
-                   {{ materia.nome }}
+                   <a class="" href="/provas/ver_questoes/{{ materia.id }}"> {{ materia.nome }} </a>
                 </div>
             </div>
 
