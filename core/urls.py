@@ -21,7 +21,6 @@ from .views import (
     provas, criarProva, verProva, revisarProva, editarProva,
     criarMateria, verMateria, editarMateria, excluirMateria, 
     adicionarQuestao, adicionar_questao_em_lote, verQuestao, editarQuestao, excluirQuestao, alternarValorQuestao,
-    cgm, carga,
     gerar_espelho_prova
 )
 
@@ -33,9 +32,10 @@ urlpatterns = [
     path('provas/criar/', criarProva),
     path('provas/ver/<int:id>', verProva),
     path('provas/revisar/<int:id>', revisarProva),
+    path('provas/editar_prova/<int:id>', editarProva),
    
     path('provas/ver_materias/<int:provaId>', verMateria),
-    path('provas/editar_prova/<int:id>', editarProva),
+    path('provas/criar-materia/<int:id>', criarMateria),
     path('provas/editar_materia/<int:id>', editarMateria),
     path('provas/excluir_materia/<int:id>', excluirMateria),
     
@@ -44,12 +44,7 @@ urlpatterns = [
     path('provas/ver_questoes/<int:materiaId>', verQuestao),
     path('provas/editar_questao/<int:id>', editarQuestao),
     path('provas/alternar_valor_questao/<int:id>', alternarValorQuestao),
-    
     path('provas/excluir_questao/<int:id>', excluirQuestao),
-    
-    path('carga/', carga),
-    path('provas/criar-materia/<int:id>', criarMateria),
-    path('cgm/', cgm),
     
     path("provas/pdf/<int:id>/", gerar_espelho_prova),
 ]

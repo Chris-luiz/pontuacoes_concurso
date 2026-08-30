@@ -20,12 +20,13 @@
         {% for prova in provas %}
         <tr>
             <td>{{ prova.id }}</td>
-            <td>{{ prova.nome }}</td>
+            <td>
+                 <a class="is-link" href="/provas/ver/{{ prova.id }}">{{ prova.nome }}</a>
+            </td>
             <td>{{ prova.data|date:"d/m/Y" }}</td>
             <td><a target="_blank" href="{{ prova.link_prova }}">{{ prova.link_prova|default:"" }}</a></td>
             <td><a target="_blank" href="{{ prova.link_gabarito }}">{{ prova.link_gabarito|default:"" }}</a></td>
             <td class="has-text-centered">
-                <a class="button is-link" href="/provas/ver/{{ prova.id }}">Ver</a>
                 <a class="button is-default" href="/provas/editar_prova/{{ prova.id }}">Editar</a>
             </td>
         </tr>

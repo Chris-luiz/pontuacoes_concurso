@@ -127,39 +127,6 @@ def criarMateria(request, id):
         'prova': prova,
     })
     
-def carga(request):
- 
-    prova = Prova.objects.filter(nome="CGM").first()
-    
-    provaModel = Prova()
-    
-    
-    for key, item in provaModel.QUESTOES.items():
-        
-        materiaModel = Materia()
-        materiaModel.nome = key
-        materiaModel.prova_fk_id = prova.id
-        materiaModel.save()
-        
-        for numero, valor in item.items():
-            questao = Questao()
-            questao.numero = numero
-            questao.valor = valor
-            questao.materia_fk_id = materiaModel.id
-            questao.save()        
-
-    return HttpResponse('Funcionou')   
-    
-def cgm(request):
-    
-    prova = Prova()
-    totais = prova.obterTotais()
-    
-    return render(request, 'core/main.html', {
-        "prova": prova,
-        "totais": totais
-    })
-
 def verMateria(request, provaId):
     
     prova = Prova.objects.filter(id=provaId).first()
@@ -423,8 +390,8 @@ def gerar_espelho_prova(request, id):
     elementos.append(tabela_questoes)
     
     totais = prova.obterTotais()
-    total = totais['total']['acertos']
-    acertos = totais['total']['total']
+    acertos = totais['total']['acertos']
+    total = totais['total']['total']
 
     elementos.append(Paragraph(f"Total: {acertos}/{total}"))
 

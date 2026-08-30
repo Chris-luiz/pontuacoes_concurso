@@ -2,48 +2,9 @@
 
 {% load dict_extras %}
 
+{% load static %}
+
 {% block content %}
-
-<style>
-    .menu-flutuante {
-        position: fixed;
-        right: 1.5rem;
-        bottom: 1.5rem;
-        z-index: 1000;
-        width: 340px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .menu-flutuante.minimizado {
-        width: auto;
-    }
-
-    .menu-flutuante.minimizado .menu-conteudo {
-        display: none;
-    }
-
-    .menu-flutuante-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .menu-flutuante-titulo {
-        font-weight: bold;
-    }
-
-    .menu-flutuante .button {
-        width: 100%;
-    }
-
-    .menu-flutuante.minimizado .menu-flutuante-header {
-        gap: 0.5rem;
-    }
-
-    .select-limpeza {
-        min-width: 100px;
-    }
-</style>
 
 <div class="is-flex is-justify-content-space-between is-align-items-center">
     <div>
@@ -73,46 +34,45 @@
         </thead>
         <tbody>
             {% for materia in materias %}
-            {% for questao in materia.questao_set.all %}
-            <tr>
-                <td> {{ questao.numero }} </td>
-                <td class="has-text-centered td-resposta-correta">
-                    <div class="select">
-                        <select class="select-resposta-correta" name="resposta_correta_{{ questao.id }}">
-                            <option value="">Selecione</option>
-                            {% for codigo, descricao in opcoes %}
-                            <option value="{{ codigo }}" {% if questao.resposta_correta == codigo %} selected {% endif %}>
-                                {{ descricao }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </td>
+                {% for questao in materia.questao_set.all %}
+                    <tr>
+                        <td> {{ questao.numero }} </td>
+                        <td class="has-text-centered td-resposta-correta">
+                            <div class="select">
+                                <select class="select-resposta-correta" name="resposta_correta_{{ questao.id }}">
+                                    <option value="">Selecione</option>
+                                    {% for codigo, descricao in opcoes %}
+                                    <option value="{{ codigo }}" {% if questao.resposta_correta == codigo %} selected {% endif %}>
+                                        {{ descricao }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </td>
 
-                <td class="has-text-centered td-resposta-inserida">
-                    <div class="select">
-                        <select class="select-resposta-inserida" name="resposta_inserida_{{ questao.id }}">
-                            <option value="">Selecione</option>
-                            {% for codigo, descricao in opcoes %}
-                            <option value="{{ codigo }}" {% if questao.resposta_inserida == codigo %} selected {% endif %}>
-                                {{ descricao }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </td>
+                        <td class="has-text-centered td-resposta-inserida">
+                            <div class="select">
+                                <select class="select-resposta-inserida" name="resposta_inserida_{{ questao.id }}">
+                                    <option value="">Selecione</option>
+                                    {% for codigo, descricao in opcoes %}
+                                    <option value="{{ codigo }}" {% if questao.resposta_inserida == codigo %} selected {% endif %}>
+                                        {{ descricao }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </td>
 
-                <td class="has-text-centered td-valor" data-id="{{ questao.id }}""> 
-                            <span style=" cursor: pointer;"
-                    class="tag {% if questao.valor %} is-primary {% else %} is-danger {% endif %}">
-                    {% if questao.valor %} ACERTO {% else %} ERRO {% endif %}
-                    </span>
-                </td>
-                <td class="has-text-centered">
-                    <a href="/provas/editar_questao/{{ questao.id }}" class="button is-default">Editar</a>
-                </td>
-            </tr>
-            {% endfor %}
+                        <td class="has-text-centered td-valor" data-id="{{ questao.id }}""> 
+                            <span class="tag {% if questao.valor %} is-primary {% else %} is-danger {% endif %}">
+                                {% if questao.valor %} ACERTO {% else %} ERRO {% endif %}
+                            </span>
+                        </td>
+                        <td class="has-text-centered">
+                            <a href="/provas/editar_questao/{{ questao.id }}" class="button is-default">Editar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
             {% endfor %}
         </tbody>
     </table>
@@ -196,163 +156,6 @@
     </div>
 </div>
 
-<script>
-    const menuFlutuante = document.getElementById('menuFlutuante');
-    const btnMinimizar = document.getElementById('btnMinimizar');
-
-    const btnLimparCorretas = document.getElementById('btnLimparCorretas');
-    const btnLimparInseridas = document.getElementById('btnLimparInseridas');
-    const btnLimparTudo = document.getElementById('btnLimparTudo');
-    const btnVoltarTopo = document.getElementById('btnVoltarTopo');
-    const btnIrFinal = document.getElementById('btnIrFinal');
-    const btnOcultarRespostasCertas = document.getElementById('btnOcultarRespostasCertas');
-    const btnOcultarRespostasInseridas = document.getElementById('btnOcultarRespostasInseridas');
-    const btnOcultarAcertos = document.getElementById('btnOcultarAcertos');
-
-    btnVoltarTopo.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        })
-    });
-
-    btnIrFinal.addEventListener('click', () => {
-        window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: 'smooth'
-        });
-    });
-
-    btnOcultarRespostasCertas.addEventListener('click', (e) => {
-        e.target.innerText = 'Exibir Respostas Corretas';
-        document.querySelectorAll('.td-resposta-correta').forEach(el => {
-            el.classList.toggle('is-hidden');
-        });
-    });
-
-    btnOcultarRespostasInseridas.addEventListener('click', (e) => {
-        e.target.innerText = 'Exibir Respostas Inseridas';
-        document.querySelectorAll('.td-resposta-inserida').forEach(el => {
-            el.classList.toggle('is-hidden');
-        });
-    });
-
-    btnOcultarAcertos.addEventListener('click', (e) => {
-        e.target.innerText = 'Exibir Acertos';
-        document.querySelectorAll('.td-valor').forEach(el => {
-            el.classList.toggle('is-hidden');
-        });
-    });
-
-
-    btnMinimizar.addEventListener('click', function () {
-        menuFlutuante.classList.toggle('minimizado');
-
-        if (menuFlutuante.classList.contains('minimizado')) {
-            btnMinimizar.textContent = '+';
-            btnMinimizar.title = 'Expandir';
-
-        } else {
-            btnMinimizar.textContent = '−';
-            btnMinimizar.title = 'Minimizar';
-
-        }
-    });
-
-    btnLimparCorretas.addEventListener('click', function () {
-        const selects = document.querySelectorAll('.select-resposta-correta');
-
-        selects.forEach(function (select) {
-            select.value = '';
-        });
-
-    });
-
-    btnLimparInseridas.addEventListener('click', function () {
-        const selects = document.querySelectorAll('.select-resposta-inserida');
-
-        selects.forEach(function (select) {
-            select.value = '';
-        });
-    });
-
-    /*
-     * Limpa tudo
-     */
-    btnLimparTudo.addEventListener('click', function () {
-        const selects = document.querySelectorAll('.select-resposta-correta, .select-resposta-inserida');
-
-        selects.forEach(function (select) {
-            select.value = '';
-        });
-    });
-
-    const atualizarMetricas = () => {
-        let erros = 0;
-        let acertos = 0;
-        let quantidade = document.querySelectorAll('.td-valor').length;
-
-        document.querySelectorAll('.td-valor').forEach(el => {
-            const span = el.querySelector('span');
-
-            if (span.innerText == 'ACERTO') {
-                acertos += 1;
-            }
-
-            if (span.innerText == 'ERRO') {
-                erros += 1;
-            }
-        });
-
-        document.querySelector("#qtdAcertos").innerText = `${acertos} acertos`;
-        document.querySelector("#qtdErros").innerText = `${erros} acertos`;
-        document.querySelector("#percentAcertos").innerText = `${Math.round(acertos*100/quantidade)}% acertos`;
-    }
-
-    const alterarTag = (tag, alterar) => {
-        if (alterar) {
-            tag.innerText = 'ACERTO';
-            tag.classList.add('is-primary');
-            tag.classList.remove('is-danger');
-        } else {
-            tag.innerText = 'ERRO';
-            tag.classList.remove('is-primary');
-            tag.classList.add('is-danger');
-        }
-    }
-    document.querySelectorAll('.select-resposta-correta').forEach(select => {
-        select.addEventListener('change', (e) => {
-            const responstaCorreta = e.target;
-            const nameNumero = responstaCorreta.getAttribute('name').split('_')[2];
-
-            const respostaInserida = document.querySelector(`[name=resposta_inserida_${nameNumero}]`).value
-
-            const td = document.querySelector(`[data-id="${nameNumero}"]`).querySelector('span');
-
-            alterarTag(td, responstaCorreta.value == respostaInserida);
-
-            atualizarMetricas();
-        });
-    });
-
-   
-
-    document.querySelectorAll('.select-resposta-inserida').forEach(select => {
-        select.addEventListener('change', (e) => {
-            const respostaInserida = e.target;
-            const nameNumero = respostaInserida.getAttribute('name').split('_')[2];
-
-            const respostaCorreta = document.querySelector(`[name=resposta_correta_${nameNumero}]`).value
-
-            const td = document.querySelector(`[data-id="${nameNumero}"]`).querySelector('span');
-
-            alterarTag(td, respostaInserida.value == respostaCorreta);
-
-            atualizarMetricas();
-        });
-    });
-
-    atualizarMetricas();
-</script>
+<script src="{% static 'js/revisao.js' %}"></script>
 
 {% endblock %}

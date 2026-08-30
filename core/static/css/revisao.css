@@ -1,0 +1,38 @@
+.menu-flutuante {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 1000;
+    width: 340px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.menu-flutuante.minimizado {
+    width: auto;
+}
+
+.menu-flutuante.minimizado .menu-conteudo {
+    display: none;
+}
+
+.menu-flutuante-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-flutuante-titulo {
+    font-weight: bold;
+}
+
+.menu-flutuante .button {
+    width: 100%;
+}
+
+.menu-flutuante.minimizado .menu-flutuante-header {
+    gap: 0.5rem;
+}
+
+.select-limpeza {
+    min-width: 100px;
+}
