@@ -18,10 +18,11 @@ from django.contrib import admin
 from django.urls import path
 from .views import (
     index,
-    provas, criarProva, verProva, editarProva,
+    provas, criarProva, verProva, revisarProva, editarProva,
     criarMateria, verMateria, editarMateria, excluirMateria, 
-    adicionarQuestao, verQuestao, editarQuestao, excluirQuestao, alternarValorQuestao,
+    adicionarQuestao, adicionar_questao_em_lote, verQuestao, editarQuestao, excluirQuestao, alternarValorQuestao,
     cgm, carga,
+    gerar_espelho_prova
 )
 
 
@@ -31,6 +32,7 @@ urlpatterns = [
     path('provas', provas),
     path('provas/criar/', criarProva),
     path('provas/ver/<int:id>', verProva),
+    path('provas/revisar/<int:id>', revisarProva),
    
     path('provas/ver_materias/<int:provaId>', verMateria),
     path('provas/editar_prova/<int:id>', editarProva),
@@ -38,6 +40,7 @@ urlpatterns = [
     path('provas/excluir_materia/<int:id>', excluirMateria),
     
     path('provas/adicionar_questao/<int:materiaId>', adicionarQuestao),
+    path('provas/adicionar_questao_em_lote/<int:materiaId>', adicionar_questao_em_lote),
     path('provas/ver_questoes/<int:materiaId>', verQuestao),
     path('provas/editar_questao/<int:id>', editarQuestao),
     path('provas/alternar_valor_questao/<int:id>', alternarValorQuestao),
@@ -46,5 +49,7 @@ urlpatterns = [
     
     path('carga/', carga),
     path('provas/criar-materia/<int:id>', criarMateria),
-    path('cgm/', cgm)
+    path('cgm/', cgm),
+    
+    path("provas/pdf/<int:id>/", gerar_espelho_prova),
 ]

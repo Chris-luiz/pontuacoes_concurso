@@ -11,6 +11,8 @@
             <th class="is-light">ID</th>
             <th class="is-light">Nome</th>
             <th class="is-light">Data</th>
+            <th class="is-light">Link da Prova</th>
+            <th class="is-light">Link do Gabarito</th>
             <th class="is-light has-text-centered">Ações</th>
         </tr>
     </thead>
@@ -20,6 +22,8 @@
             <td>{{ prova.id }}</td>
             <td>{{ prova.nome }}</td>
             <td>{{ prova.data|date:"d/m/Y" }}</td>
+            <td><a target="_blank" href="{{ prova.link_prova }}">{{ prova.link_prova|default:"" }}</a></td>
+            <td><a target="_blank" href="{{ prova.link_gabarito }}">{{ prova.link_gabarito|default:"" }}</a></td>
             <td class="has-text-centered">
                 <a class="button is-link" href="/provas/ver/{{ prova.id }}">Ver</a>
                 <a class="button is-default" href="/provas/editar_prova/{{ prova.id }}">Editar</a>

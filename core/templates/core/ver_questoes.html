@@ -1,5 +1,7 @@
 {% extends "core/base.html" %}
 
+{% load static %}
+
 {% block content %}
 
 <div class="is-flex is-justify-content-space-between mb-2 is-align-items-center">
@@ -8,6 +10,7 @@
     <div class="is-flex is-gap-2">
         <a class="button is-default" href="/provas/ver_materias/{{ materia.prova_fk_id }}">Voltar</a>
         <a class="button is-primary" href="/provas/adicionar_questao/{{ materia.id }}">Adicionar Questão</a>
+        <a class="button is-success" href="/provas/adicionar_questao_em_lote/{{ materia.id }}">Adicionar Questão em Lote</a>
     </div>
 </div>
 
@@ -15,6 +18,8 @@
     <thead>
         <tr>
             <th class="is-light">Número</th>
+            <th class="is-light has-text-centered">Resposta Correta</th>
+            <th class="is-light has-text-centered">Resposta Inserida</th>
             <th class="is-light has-text-centered">Valor</th>
             <th class="is-light has-text-centered">Ações</th>
         </tr>
@@ -23,6 +28,16 @@
         {% for questao in questoes %}
         <tr>
             <td> {{ questao.numero }} </td>       
+            <td class="has-text-centered">
+                <span class="tag is-info is-light">
+                    {{questao.resposta_correta}}
+                </span>
+            </td>   
+            <td class="has-text-centered">
+                <span class="tag is-info is-light">
+                    {{questao.resposta_inserida}}
+                </span>
+            </td>
             <td class="has-text-centered" onclick="alternarValorQuestao({{ questao.id }})" data-id="{{ questao.id }}""> 
                 <span style="cursor: pointer;" class="tag {% if questao.valor %} is-primary {% else %} is-danger {% endif %}"> 
                     {% if questao.valor %} SIM {% else %} NÃO {% endif %} 
@@ -35,22 +50,8 @@
         </tr>
         {% endfor %}
     </tbody>
-    
 </table>
 
-<script>
-    const alternarValorQuestao = async (id) => {
-        const res = await fetch(`/provas/alternar_valor_questao/${id}`, );
-        const response = await res.json();
-        
-        if (response && response.status) {
-            const { questaoId, valor } = response;
-            const questao = document.querySelector(`[data-id='${questaoId}']`).querySelector('span');
-            questao.innerText = valor ? "SIM" : "NÃO" ;
-            questao.classList.toggle('is-primary');
-            questao.classList.toggle('is-danger');
-        }
-    }
-</script>
+<script src="{% static 'js/alternar-valor-questao.js' %}"></script>
 
 {% endblock %}

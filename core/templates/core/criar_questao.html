@@ -16,21 +16,35 @@
     <div class="card-content">
         <form action="" method="post">
             {% csrf_token %}
-            {{ form }}
 
-            <div>
-                <label for="id_criar_varios">Criar varios:</label>
-                <input type="checkbox" name="criar_varios" class="checkbox mb-4" id="id_criar_varios">
+            <div class="field">
+                <label for="id_numero">Numero:</label>
+                {{ form.numero }}
             </div>
 
-            <div class="is-hidden">
-                <label for="id_de">De:</label>
-                <input type="number" name="de" class="input mb-4" id="id_de">
+            <div class="field"> 
+                <label for="id_valor">Valor:</label>
+                {{ form.valor }}
             </div>
 
-            <div class="is-hidden">
-                <label for="id_ate">Ate:</label>
-                <input type="number" name="ate" class="input mb-4" id="id_ate">
+            <div class="field is-grouped">
+                <div>
+                    <label for="id_resposta_correta">Resposta correta:</label>
+                    <div class="control">
+                        <div class="select">
+                            {{ form.resposta_correta }}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="id_resposta_inserida">Resposta Inserida:</label>
+                    <div class="control">
+                        <div class="select">
+                            {{ form.resposta_inserida }}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <a href="/provas/ver_questoes/{{ model.id }}" class="button is-default" type="submit"

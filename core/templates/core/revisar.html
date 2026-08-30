@@ -1,0 +1,358 @@
+{% extends "core/base.html" %}
+
+{% load dict_extras %}
+
+{% block content %}
+
+<style>
+    .menu-flutuante {
+        position: fixed;
+        right: 1.5rem;
+        bottom: 1.5rem;
+        z-index: 1000;
+        width: 340px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .menu-flutuante.minimizado {
+        width: auto;
+    }
+
+    .menu-flutuante.minimizado .menu-conteudo {
+        display: none;
+    }
+
+    .menu-flutuante-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .menu-flutuante-titulo {
+        font-weight: bold;
+    }
+
+    .menu-flutuante .button {
+        width: 100%;
+    }
+
+    .menu-flutuante.minimizado .menu-flutuante-header {
+        gap: 0.5rem;
+    }
+
+    .select-limpeza {
+        min-width: 100px;
+    }
+</style>
+
+<div class="is-flex is-justify-content-space-between is-align-items-center">
+    <div>
+        <h1 class="title">Prova: {{ model.id }} | {{ model.nome }}</h1>
+        <p class="subtitle">Realizada em {{ model.data|date:"d/m/Y" }} </p>
+    </div>
+
+    <div class="is-flex is-gap-2">
+        <a class="button is-default" href="/provas">Voltar</a>
+    </div>
+</div>
+
+<p>Para conferir a prova clique <a target="_blank" href="{{ model.link_prova }}">aqui</a>.</p>
+<p>Para conferir o gabarito clique <a target="_blank" href="{{ model.link_gabarito }}">aqui</a></p>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <table class="table is-bordered is-fullwidth is-hoverable">
+        <thead>
+            <tr>
+                <th class="is-light">Número</th>
+                <th class="is-light has-text-centered">Resposta Correta</th>
+                <th class="is-light has-text-centered">Resposta Inserida</th>
+                <th class="is-light has-text-centered">Valor</th>
+                <th class="is-light has-text-centered">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for materia in materias %}
+            {% for questao in materia.questao_set.all %}
+            <tr>
+                <td> {{ questao.numero }} </td>
+                <td class="has-text-centered td-resposta-correta">
+                    <div class="select">
+                        <select class="select-resposta-correta" name="resposta_correta_{{ questao.id }}">
+                            <option value="">Selecione</option>
+                            {% for codigo, descricao in opcoes %}
+                            <option value="{{ codigo }}" {% if questao.resposta_correta == codigo %} selected {% endif %}>
+                                {{ descricao }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </td>
+
+                <td class="has-text-centered td-resposta-inserida">
+                    <div class="select">
+                        <select class="select-resposta-inserida" name="resposta_inserida_{{ questao.id }}">
+                            <option value="">Selecione</option>
+                            {% for codigo, descricao in opcoes %}
+                            <option value="{{ codigo }}" {% if questao.resposta_inserida == codigo %} selected {% endif %}>
+                                {{ descricao }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </td>
+
+                <td class="has-text-centered td-valor" data-id="{{ questao.id }}""> 
+                            <span style=" cursor: pointer;"
+                    class="tag {% if questao.valor %} is-primary {% else %} is-danger {% endif %}">
+                    {% if questao.valor %} ACERTO {% else %} ERRO {% endif %}
+                    </span>
+                </td>
+                <td class="has-text-centered">
+                    <a href="/provas/editar_questao/{{ questao.id }}" class="button is-default">Editar</a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button type="submit" class="button is-default">Enviar</button>
+</form>
+
+
+<div id="menuFlutuante" class="box menu-flutuante">
+    <div class="menu-flutuante-header">
+        <button type="button" id="btnMinimizar" class="button is-small is-light" title="Minimizar">
+            <span class="icon">
+                <i class="fas fa-chevron-down"></i> 
+            </span> 
+        </button>
+    </div>
+    
+    <div id="menuConteudo" class="menu-conteudo mt-3"> <!-- NAVEGAÇÃO -->
+        <div class="box mb-2">
+            <div class="is-flex is-justify-content-center is-align-content-center is-gap-1">
+                <span id="qtdAcertos" class="tag is-primary is-light"></span>
+                <span id="qtdErros" class="tag is-danger is-light"></span>
+                <span id="percentAcertos" class="tag is-info is-light"></span>
+            </div>
+        </div>
+
+        <div class="box"> 
+            <button type="button" id="btnVoltarTopo" class="button is-link is-light mb-2 is-small"> 
+                <span class="icon"> 
+                    <i class="fas fa-arrow-up"></i> 
+                </span> 
+                <span>Ir ao topo</span> 
+            </button> 
+            <button type="button" id="btnIrFinal" class="button is-link mb-2 is-small"> 
+                <span class="icon"> 
+                    <i class="fas fa-arrow-down"></i>
+                </span> 
+                <span>Ir ao final</span> 
+            </button>
+        </div>
+
+        <div class="box"> 
+            <button type="button" id="btnOcultarRespostasCertas" class="button is-primary is-light mb-2 is-small">
+                <span class="icon"> 
+                    <i class="fas fa-eye-slash"></i> 
+                </span> 
+                <span>Ocultar corretas</span> 
+            </button>
+            <button type="button" id="btnOcultarRespostasInseridas" class="button is-info is-light mb-2 is-small"> 
+                <span class="icon"> 
+                    <i class="fas fa-eye-slash"></i> 
+                </span>
+            <span>Ocultar inseridas</span> </button>
+            <button type="button" id="btnOcultarAcertos" class="button is-success is-light mb-2 is-small"> 
+                <span class="icon"> 
+                    <i class="fas fa-eye-slash"></i>
+                </span> 
+                <span>Ocultar acertos</span> 
+            </button>
+        </div>
+
+        <div class="box"> 
+            <button type="button" id="btnLimparCorretas" class="button is-warning is-light mb-2 is-small"> 
+                <span class="icon"> 
+                    <i class="fas fa-eraser"></i> 
+                </span> 
+                <span>Limpar certas</span> 
+            </button> 
+            <button type="button" id="btnLimparInseridas" class="button is-warning is-light mb-2 is-small"> 
+                <span class="icon"> 
+                    <i class="fas fa-eraser"></i> 
+                </span> 
+                <span>Limpar inseridas</span> </button> 
+            <button type="button" id="btnLimparTudo" class="button is-danger is-light is-small"> 
+                <span class="icon"> 
+                    <i class="fas fa-trash-alt"></i>
+                </span> 
+                <span>Limpar tudo</span> 
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const menuFlutuante = document.getElementById('menuFlutuante');
+    const btnMinimizar = document.getElementById('btnMinimizar');
+
+    const btnLimparCorretas = document.getElementById('btnLimparCorretas');
+    const btnLimparInseridas = document.getElementById('btnLimparInseridas');
+    const btnLimparTudo = document.getElementById('btnLimparTudo');
+    const btnVoltarTopo = document.getElementById('btnVoltarTopo');
+    const btnIrFinal = document.getElementById('btnIrFinal');
+    const btnOcultarRespostasCertas = document.getElementById('btnOcultarRespostasCertas');
+    const btnOcultarRespostasInseridas = document.getElementById('btnOcultarRespostasInseridas');
+    const btnOcultarAcertos = document.getElementById('btnOcultarAcertos');
+
+    btnVoltarTopo.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        })
+    });
+
+    btnIrFinal.addEventListener('click', () => {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
+    });
+
+    btnOcultarRespostasCertas.addEventListener('click', (e) => {
+        e.target.innerText = 'Exibir Respostas Corretas';
+        document.querySelectorAll('.td-resposta-correta').forEach(el => {
+            el.classList.toggle('is-hidden');
+        });
+    });
+
+    btnOcultarRespostasInseridas.addEventListener('click', (e) => {
+        e.target.innerText = 'Exibir Respostas Inseridas';
+        document.querySelectorAll('.td-resposta-inserida').forEach(el => {
+            el.classList.toggle('is-hidden');
+        });
+    });
+
+    btnOcultarAcertos.addEventListener('click', (e) => {
+        e.target.innerText = 'Exibir Acertos';
+        document.querySelectorAll('.td-valor').forEach(el => {
+            el.classList.toggle('is-hidden');
+        });
+    });
+
+
+    btnMinimizar.addEventListener('click', function () {
+        menuFlutuante.classList.toggle('minimizado');
+
+        if (menuFlutuante.classList.contains('minimizado')) {
+            btnMinimizar.textContent = '+';
+            btnMinimizar.title = 'Expandir';
+
+        } else {
+            btnMinimizar.textContent = '−';
+            btnMinimizar.title = 'Minimizar';
+
+        }
+    });
+
+    btnLimparCorretas.addEventListener('click', function () {
+        const selects = document.querySelectorAll('.select-resposta-correta');
+
+        selects.forEach(function (select) {
+            select.value = '';
+        });
+
+    });
+
+    btnLimparInseridas.addEventListener('click', function () {
+        const selects = document.querySelectorAll('.select-resposta-inserida');
+
+        selects.forEach(function (select) {
+            select.value = '';
+        });
+    });
+
+    /*
+     * Limpa tudo
+     */
+    btnLimparTudo.addEventListener('click', function () {
+        const selects = document.querySelectorAll('.select-resposta-correta, .select-resposta-inserida');
+
+        selects.forEach(function (select) {
+            select.value = '';
+        });
+    });
+
+    const atualizarMetricas = () => {
+        let erros = 0;
+        let acertos = 0;
+        let quantidade = document.querySelectorAll('.td-valor').length;
+
+        document.querySelectorAll('.td-valor').forEach(el => {
+            const span = el.querySelector('span');
+
+            if (span.innerText == 'ACERTO') {
+                acertos += 1;
+            }
+
+            if (span.innerText == 'ERRO') {
+                erros += 1;
+            }
+        });
+
+        document.querySelector("#qtdAcertos").innerText = `${acertos} acertos`;
+        document.querySelector("#qtdErros").innerText = `${erros} acertos`;
+        document.querySelector("#percentAcertos").innerText = `${Math.round(acertos*100/quantidade)}% acertos`;
+    }
+
+    const alterarTag = (tag, alterar) => {
+        if (alterar) {
+            tag.innerText = 'ACERTO';
+            tag.classList.add('is-primary');
+            tag.classList.remove('is-danger');
+        } else {
+            tag.innerText = 'ERRO';
+            tag.classList.remove('is-primary');
+            tag.classList.add('is-danger');
+        }
+    }
+    document.querySelectorAll('.select-resposta-correta').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const responstaCorreta = e.target;
+            const nameNumero = responstaCorreta.getAttribute('name').split('_')[2];
+
+            const respostaInserida = document.querySelector(`[name=resposta_inserida_${nameNumero}]`).value
+
+            const td = document.querySelector(`[data-id="${nameNumero}"]`).querySelector('span');
+
+            alterarTag(td, responstaCorreta.value == respostaInserida);
+
+            atualizarMetricas();
+        });
+    });
+
+   
+
+    document.querySelectorAll('.select-resposta-inserida').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const respostaInserida = e.target;
+            const nameNumero = respostaInserida.getAttribute('name').split('_')[2];
+
+            const respostaCorreta = document.querySelector(`[name=resposta_correta_${nameNumero}]`).value
+
+            const td = document.querySelector(`[data-id="${nameNumero}"]`).querySelector('span');
+
+            alterarTag(td, respostaInserida.value == respostaCorreta);
+
+            atualizarMetricas();
+        });
+    });
+
+    atualizarMetricas();
+</script>
+
+{% endblock %}

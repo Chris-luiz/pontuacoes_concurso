@@ -128,3 +128,7 @@ h3 {
     position: sticky;
     top: 0;
 }
+
+.errorlist {
+    color: red;
+}

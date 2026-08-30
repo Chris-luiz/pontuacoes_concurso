@@ -1,0 +1,43 @@
+{% extends "core/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<h1 class="title">Criar Questão em Lote</h1>
+<p class="subtitle">pagina de criação de questão em Lote</p>
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-header-title">
+            Preencha os campos abaixo
+        </div>
+    </div>
+    <div class="card-content">
+        <form action="" method="post">
+            {% csrf_token %}
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <label for="id_de">De:</label>
+                    {{ form.de }}
+                </div>
+                
+                <div class="control">
+                    <label for="id_ate">Ate:</label>
+                    {{ form.ate }}
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="id_valor_1">Valor Padrão:</label>
+                {{ form.valor }}
+            </div>
+
+            <a href="/provas/ver_questoes/{{ model.id }}" class="button is-default" type="submit" value="Enviar">Voltar</a>
+            <input class="button is-primary" type="submit" value="Enviar">
+        </form>
+    </div>
+</div>
+
+{% endblock %}
