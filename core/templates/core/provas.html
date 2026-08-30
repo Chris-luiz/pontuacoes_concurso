@@ -11,6 +11,8 @@
             <th class="is-light">ID</th>
             <th class="is-light">Nome</th>
             <th class="is-light">Data</th>
+            <th class="is-light">Resultado</th>
+            <th class="is-light">%Acerto</th>
             <th class="is-light">Link da Prova</th>
             <th class="is-light">Link do Gabarito</th>
             <th class="is-light has-text-centered">Ações</th>
@@ -20,12 +22,12 @@
         {% for prova in provas %}
         <tr>
             <td>{{ prova.id }}</td>
-            <td>
-                 <a class="is-link" href="/provas/ver/{{ prova.id }}">{{ prova.nome }}</a>
-            </td>
+            <td><a class="is-link" href="/provas/ver/{{ prova.id }}">{{ prova.nome }}</a></td>
             <td>{{ prova.data|date:"d/m/Y" }}</td>
-            <td><a target="_blank" href="{{ prova.link_prova }}">{{ prova.link_prova|default:"" }}</a></td>
-            <td><a target="_blank" href="{{ prova.link_gabarito }}">{{ prova.link_gabarito|default:"" }}</a></td>
+            <td>{{ prova.totais.total.acertos }}/{{ prova.totais.total.total }}</td>
+            <td>{{ prova.total_percentual }}%</td>
+            <td style="overflow-wrap: anywhere;"><a target="_blank" href="{{ prova.link_prova }}">{{ prova.link_prova|default:"" }}</a></td>
+            <td style="overflow-wrap: anywhere;"><a target="_blank" href="{{ prova.link_gabarito }}">{{ prova.link_gabarito|default:"" }}</a></td>
             <td class="has-text-centered">
                 <a class="button is-default" href="/provas/editar_prova/{{ prova.id }}">Editar</a>
             </td>
@@ -33,5 +35,112 @@
         {% endfor %}
     </tbody>
 </table>
+
+<div class="card mb-5">
+    <div class="card-header">
+        <div class="card-header-title">
+            Evolução nos concursos
+        </div>
+    </div>
+
+    <div class="card-content">
+        <div style="position: relative; height: 400px;">
+            <canvas id="graficoEvolucao"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script>
+    const nomes = [
+        {% for prova in provas %}
+            "{{ prova.nome|escapejs }}",
+        {% endfor %}
+    ];
+
+    const percentuais = [
+        {% for prova in provas %}
+            {{ prova.total_percentual|default:0 }},
+        {% endfor %}
+    ];
+
+    const acertos = [
+        {% for prova in provas %}
+            {{ prova.totais.total.acertos|default:0 }},
+        {% endfor %}
+    ];
+
+    const totais = [
+        {% for prova in provas %}
+            {{ prova.totais.total.total|default:0 }},
+        {% endfor %}
+    ];
+
+    const ctx = document.getElementById('graficoEvolucao');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: nomes,
+            datasets: [{
+                label: '% de acertos',
+                data: percentuais,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    title: {
+                        display: true,
+                        text: 'Percentual de acertos'
+                    }
+                },
+                x: {
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 60,
+                        minRotation: 45
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                datalabels: {
+                    anchor: 'center',
+                    align: 'center',
+                    formatter: function(value, context) {
+                        const index = context.dataIndex;
+                        return [
+                            value + '%',
+                            acertos[index] + '/' + totais[index]
+                        ];
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            return [
+                                'Acertos: ' + acertos[index] + '/' + totais[index],
+                                'Percentual: ' + percentuais[index] + '%'
+                            ];
+                        }
+                    }
+                }
+            }
+        },
+
+        plugins: [ChartDataLabels]
+    });
+</script>
 
 {% endblock %}

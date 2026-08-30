@@ -5,29 +5,31 @@ class Prova(models.Model):
     id = models.BigAutoField(primary_key=True)
     nome = models.CharField(max_length=200)
     data = models.DateField()
-    link_prova = models.CharField(max_length=255, null=True)
-    link_gabarito = models.CharField(max_length=255, null=True)
+    link_prova = models.CharField(max_length=1024, null=True)
+    link_gabarito = models.CharField(max_length=1024, null=True)
     
     class Meta:
         db_table = 'prova'
     
-    @property
-    def obterQuestoes(self):
-        materias = Materia.objects.filter(prova_fk=self.id).prefetch_related('questao_set')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
-        materias_itens = {}
+        if self.id:
+            self.obterTotais()
+
+    def obterTotais(self, provaId=None, materiaNome=None, totalOnly=False):
         
-        for materia in materias:
-            materias_itens[materia.nome] = materia.questao_set.all()
-            
-        return materias_itens
-    
-    def obterTotais(self):
-        materias = Materia.objects.filter(prova_fk=self.id).prefetch_related('questao_set')
+        id = self.id if provaId is None else provaId
+        
+        materias = Materia.objects.filter(prova_fk=id).prefetch_related('questao_set')
+
         totais = {}
 
         total_acertos = 0
         total_questoes = 0
+        
+        if materiaNome:
+            pass
 
         for materia in materias:
 
@@ -48,6 +50,9 @@ class Prova(models.Model):
             'acertos': total_acertos,
             'total': total_questoes,
         }
+        
+        self.total_percentual = round(total_acertos * 100 / total_questoes)
+        self.totais = totais
 
         return totais
     

@@ -21,12 +21,21 @@ def index(request):
 
 def provas(request):
     
-    provas = Prova.objects.all()
+    provas = Prova.objects.all().order_by('data')
     
+    dados_grafico = [
+        {
+            'ano': prova.data.year,
+            'nome': prova.nome,
+            'percentual': prova.total_percentual,
+        }
+        for prova in provas
+    ]
+
     return render(request, 'core/provas.html', {
-        'provas': provas
+        'provas': provas,
+        'dados_grafico': dados_grafico,
     })
-    
 def criarProva(request):
     
     form = ProvaForm()
