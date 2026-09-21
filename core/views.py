@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Prova, Materia, Questao
 from .forms import ProvaForm, MateriaForm, QuestaoForm, QuestaoLoteForm
 from io import BytesIO
+import json
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -15,6 +16,12 @@ from reportlab.platypus import (
     Paragraph,
     Spacer,
 )
+
+def test(request):
+    
+    response = Questao.objects.filter(materia_fk=42).update(peso=2.5)
+    
+    return JsonResponse((response), safe=False)
 
 def index(request):
     return HttpResponseRedirect("/provas")
@@ -36,6 +43,7 @@ def provas(request):
         'provas': provas,
         'dados_grafico': dados_grafico,
     })
+
 def criarProva(request):
     
     form = ProvaForm()
@@ -72,32 +80,40 @@ def editarProva(request, id):
 def verProva(request, id):
     
     model = Prova.objects.filter(id = id).first()
-    materias = Materia.objects.filter(prova_fk=id).prefetch_related('questao_set')
+    materias = Materia.objects.filter(prova_fk=id).order_by('ordem').prefetch_related('questao_set')
     totais = model.obterTotais()
+    
+    totalAcertos = totais['totalAcertos']
+    totalQuestoes = totais['totalQuestoes']
+    notaFinal = totais['notaFinal']
+    notaTotal = totais['notaTotal']
+    
     
     return render(request, 'core/ver_prova.html', {
         'model': model,
         'materias': materias,
-        'totais': totais
+        'totais': totais['totais'],
+        'totalAcertos': totalAcertos,
+        'totalQuestoes': totalQuestoes,
+        'notaFinal': notaFinal,
+        'notaTotal': notaTotal,
     })
    
 def revisarProva(request, id):
 
     model = Prova.objects.filter(id=id).first()
-    materias = Materia.objects.filter(prova_fk=id).prefetch_related('questao_set')
+    materias = Materia.objects.filter(prova_fk=id).order_by('ordem').prefetch_related('questao_set')
     
     if request.method == 'POST':
-        print(request.POST)
         for materia in materias:
-            print(materia)
             for questao in materia.questao_set.all():
-                print(questao)
                 resposta_correta = request.POST.get(f'resposta_correta_{questao.id}')
                 resposta_inserida = request.POST.get(f'resposta_inserida_{questao.id}')
+                anulada = request.POST.get(f'anulada_{questao.id}')
                 
-                print(resposta_correta)
-                print(resposta_inserida)
-                
+                if anulada:
+                    questao.anulada = True
+                    
                 if resposta_correta:
                     questao.resposta_correta = resposta_correta
                 
@@ -139,7 +155,10 @@ def criarMateria(request, id):
 def verMateria(request, provaId):
     
     prova = Prova.objects.filter(id=provaId).first()
-    materias = Materia.objects.filter(prova_fk=provaId).all()
+    materias = Materia.objects.filter(prova_fk=provaId).order_by('ordem').all()
+    
+    for materia in materias:
+        materia.pontuacao = materia.getPontuacao()
     
     return render(request, 'core/ver_materia.html', {
         "prova": prova,
@@ -173,6 +192,7 @@ def excluirMateria(request, id):
     
 def verQuestao(request, materiaId):
     materia = Materia.objects.filter(id=materiaId).first()
+    materia.pontuacao = materia.getPontuacao()
     questoes = Questao.objects.filter(materia_fk=materiaId).all()
     
     return render(request, 'core/ver_questoes.html', {
@@ -415,5 +435,40 @@ def gerar_espelho_prova(request, id):
     response = HttpResponse(buffer, content_type="application/pdf")
 
     response["Content-Disposition"] = (f'inline; filename="prova_{prova.id}.pdf"')
+
+    return response
+
+def gerar_expelho_prova_json(request, id):
+    
+    prova = get_object_or_404(Prova, id=id)
+    
+    materias = Materia.objects.filter(prova_fk=id).prefetch_related('questao_set')
+        
+    dados = {
+        "nome": "Christian",
+        "idade": 30,
+        "cidade": "Manaus",
+        "aprovado": True,
+        "disciplinas": [
+            "Português",
+            "Direito Administrativo",
+            "Tecnologia da Informação"
+        ]
+    }
+
+    arquivo_json = json.dumps(
+        dados,
+        ensure_ascii=False,
+        indent=4
+    )
+
+    response = HttpResponse(
+        arquivo_json,
+        content_type="application/json"
+    )
+
+    response["Content-Disposition"] = (
+        'attachment; filename="example.json"'
+    )
 
     return response

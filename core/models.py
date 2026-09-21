@@ -16,6 +16,11 @@ class Prova(models.Model):
         
         if self.id:
             self.obterTotais()
+            
+    def obterTodasQuestoes(self, provaId=None):
+        id = self.id if provaId is None else provaId
+        
+        return Questao.objects.filter(materia_fk__prova_fk=id)
 
     def obterTotais(self, provaId=None, materiaNome=None, totalOnly=False):
         
@@ -27,39 +32,88 @@ class Prova(models.Model):
 
         total_acertos = 0
         total_questoes = 0
+        notaFinal = 0
+        notaFinalPossivel = 0
         
         if materiaNome:
             pass
 
+        todasQuestoes = self.obterTodasQuestoes()
+        
+        # Faz o calculo de todas as pontuações e métricas
+        for questao in todasQuestoes:
+            notaFinal += (1 * questao.peso) if questao.valor == True else 0
+            notaFinalPossivel += (1 * questao.peso)
+            total_questoes += 1
+            total_acertos += 1 if questao.valor == True else 0
+        
         for materia in materias:
 
             questoes = materia.questao_set.all()
 
             acertos = questoes.filter(valor=True).count()
             quantidade = questoes.count()
+            
+            notaObtida = questoes.filter(valor=True).aggregate(
+                total=models.Sum(1 * models.F('peso'))
+            )['total'] or 0
 
             totais[materia.nome] = {
+                'notaObtida': notaObtida,
                 'acertos': acertos,
                 'total': quantidade,
             }
 
-            total_acertos += acertos
-            total_questoes += quantidade
+        if total_questoes == 0:
+            self.total_percentual = 0 
+            self.totais = 0
+            self.total_acertos = 0
+            self.total_questoes = 0
+            self.notaFinal = 0
+            self.notaFinalPossivel = 0
+        else: 
+            total_percentual = round(total_acertos * 100 / total_questoes)
+            self.total_percentual = total_percentual 
+            self.totais = totais
+            self.total_acertos = total_acertos
+            self.total_questoes = total_questoes
+            self.notaFinal = notaFinal
+            self.notaFinalPossivel = notaFinalPossivel
 
-        totais['total'] = {
-            'acertos': total_acertos,
-            'total': total_questoes,
+        return {
+            'totais': totais,
+            'totalAcertos': total_acertos,
+            'totalQuestoes': total_questoes,
+            'notaFinal': notaFinal,
+            'notaTotal': notaFinalPossivel,
+            'total_percentual': total_percentual,
         }
-        
-        self.total_percentual = round(total_acertos * 100 / total_questoes)
-        self.totais = totais
-
-        return totais
     
 class Materia(models.Model):
     id = models.BigAutoField(primary_key=True)
     nome = models.CharField(max_length=100)
     prova_fk = models.ForeignKey(Prova, on_delete=models.CASCADE)
+    ordem = models.IntegerField(null=True)
+    
+    def getPontuacao(self):
+        questoes = self.questao_set.all()
+        
+        acertos = questoes.filter(valor=True).count()
+        quantidade = questoes.count()
+        notaTotal =  questoes.aggregate(
+            total=models.Sum(1 * models.F('peso'))
+        )['total']
+        notaObtida = questoes.filter(valor=True).aggregate(
+                    total=models.Sum(1 * models.F('peso'))
+                )['total'] or 0
+        
+        return {
+            'notaTotal': notaTotal,
+            'notaObtida': notaObtida,
+            'acertos': acertos,
+            'quantidade': quantidade,
+            'percentual': round(acertos * 100 / quantidade) if quantidade else 0
+        }
     
     class Meta: 
         db_table = 'materia'
@@ -79,6 +133,8 @@ class Questao(models.Model):
     materia_fk = models.ForeignKey(Materia, on_delete=models.CASCADE)
     resposta_correta = models.CharField(max_length=1, choices=OPCOES_CHOICES, null=True)
     resposta_inserida = models.CharField(max_length=1, choices=OPCOES_CHOICES, null=True)
+    peso = models.FloatField(null=False, default=1)
+    anulada = models.BooleanField(null=False, default=False)
     
     class Meta:
         db_table = 'questao'

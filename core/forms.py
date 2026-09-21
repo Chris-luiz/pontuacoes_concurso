@@ -16,6 +16,7 @@ class ProvaForm(forms.ModelForm):
         
 class MateriaForm(forms.ModelForm):
     nome = forms.CharField(widget=forms.TextInput(attrs={'class': 'input mb-4'}))
+    ordem = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'input mb-4'}))
     
     class Meta:
         model = Materia
@@ -36,6 +37,7 @@ class QuestaoForm(forms.ModelForm):
     valor = forms.ChoiceField(widget=forms.RadioSelect, choices=[("True", "Acerto"), ("False", "Erro")], required=True)
     resposta_correta = forms.ChoiceField(widget=forms.Select() , choices=OPCOES_CHOICES,  required=False)
     resposta_inserida = forms.ChoiceField(widget=forms.Select() , choices=OPCOES_CHOICES,  required=False)
+    peso = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'input'}), required=True)
     
     class Meta:
         model = Questao
@@ -50,6 +52,7 @@ class QuestaoLoteForm(forms.ModelForm):
     valor = forms.ChoiceField(widget=forms.RadioSelect, choices=[("True", "Acerto"), ("False", "Erro")], required=True)
     de = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'input'}), required=True)
     ate = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'input'}), required=True)
+    peso = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'input'}), required=True)
     
     class Meta:
         model = Questao

@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import (
+    test,
     index,
     provas, criarProva, verProva, revisarProva, editarProva,
     criarMateria, verMateria, editarMateria, excluirMateria, 
@@ -27,6 +28,7 @@ from .views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('test', test),
     path('', index),
     path('provas', provas),
     path('provas/criar/', criarProva),

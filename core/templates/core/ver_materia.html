@@ -11,18 +11,25 @@
     </div>
 </div>
 
-
 <table class="table is-bordered is-fullwidth">
     <thead>
         <tr>
             <th class="is-light">Nome</th>
+            <th class="is-light has-text-centered">Ordem</th>
+            <th class="is-light has-text-centered">Acertos</th>
             <th class="is-light has-text-centered">Ações</th>
         </tr>
     </thead>
     <tbody>
         {% for materia in materias %}
         <tr>
-            <td> {{ materia.nome }} </td>       
+            <td> {{ materia.nome }} </td>    
+            <td class="has-text-centered"> {{ materia.ordem }} </td>      
+            <td class="has-text-centered"> 
+                <span class="tag {% if materia.pontuacao.percentual > 50 %} has-text-primary {% else %} has-text-danger {% endif %}">
+                    {{ materia.pontuacao.acertos }} / {{ materia.pontuacao.quantidade }}
+                </span>
+            </td>        
             <td class="has-text-centered">
                 <a href="/provas/ver_questoes/{{ materia.id }}" class="button is-primary">Ver Questões</a>
                 <a href="/provas/editar_materia/{{ materia.id }}" class="button is-default">Editar</a>

@@ -14,12 +14,20 @@
     </div>
 </div>
 
+<p class="tag"> Quantidade de Acertos: {{ materia.pontuacao.acertos }} / {{ materia.pontuacao.quantidade }} </p>
+<p class="tag"> Percentual de Acerto: {{ materia.pontuacao.percentual }}% </p>
+<p class="tag"> Pontuação Obtida: {{ materia.pontuacao.notaObtida }} / {{ materia.pontuacao.notaTotal }} </p>
+
+
+
+
 <table class="table is-bordered is-fullwidth">
     <thead>
         <tr>
             <th class="is-light">Número</th>
             <th class="is-light has-text-centered">Resposta Correta</th>
             <th class="is-light has-text-centered">Resposta Inserida</th>
+            <th class="is-light has-text-centered">Peso</th>
             <th class="is-light has-text-centered">Valor</th>
             <th class="is-light has-text-centered">Ações</th>
         </tr>
@@ -37,6 +45,9 @@
                 <span class="tag is-info is-light">
                     {{questao.resposta_inserida}}
                 </span>
+            </td>
+            <td class="has-text-centered">
+                {{ questao.peso }}
             </td>
             <td class="has-text-centered" onclick="alternarValorQuestao({{ questao.id }})" data-id="{{ questao.id }}""> 
                 <span style="cursor: pointer;" class="tag {% if questao.valor %} is-primary {% else %} is-danger {% endif %}"> 

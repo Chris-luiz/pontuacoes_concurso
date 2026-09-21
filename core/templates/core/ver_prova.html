@@ -28,18 +28,27 @@
     </div>
     <div class="card-content">
 
+        <h5 class="is-size-5 has-text-weight-bold {% if totalAcertos > 48 %} has-text-primary {% else %} has-text-danger {% endif %}">
+            Pontuação Final: {{ totalAcertos }} / {{ totalQuestoes }} Acertos
+        </h5>
+
+        <h5 class="is-size-5 has-text-weight-bold {% if notaFinal > 48 %} has-text-primary {% else %} has-text-danger {% endif %}">
+            Nota Final: {{ notaFinal }} / {{ notaTotal }} Pontos
+        </h5>
+
         {% for materia in materias %}
         <div class="card is-shadowless has-border">
             <div class="card-header is-shadowless has-border">
                 <div class="card-header-title">
-                   <a class="" href="/provas/ver_questoes/{{ materia.id }}"> {{ materia.nome }} </a>
+                    <a class="" href="/provas/ver_questoes/{{ materia.id }}"> {{ materia.nome }} </a>
                 </div>
             </div>
 
             <div class="card-content">
                 <div class="is-flex is-gap-4 is-flex-wrap-wrap">
                     {% for questao in materia.questao_set.all %}
-                    <div class="box is-shadowless has-border is-flex is-justify-content-center is-align-items-center p-2 {% if questao.valor %} has-background-primary {% else %} has-background-danger {% endif %}">
+                    <div
+                        class="box is-shadowless has-border is-flex is-justify-content-center is-align-items-center p-2 {% if questao.valor %} has-background-primary {% else %} has-background-danger {% endif %}">
                         {{ questao.numero }}:
                         {% if questao.valor %} Acertou {% else %} Errou {% endif %}
                     </div>
@@ -48,20 +57,17 @@
             </div>
 
             {% with total=totais|get_item:materia.nome %}
-                <footer class="card-footer has-background-light p-2 mt-2">
-                    <p>Total: {{ total.acertos }} / {{ total.total }} Pontos</p>
-                </footer>
+            <footer class="card-footer has-background-light p-2 mt-2">
+                <p>Total: {{ total.acertos }} / {{ total.total }} Pontos</p>
+            </footer>
             {% endwith %}
         </div>
         {% endfor %}
 
     </div>
-   
+
 </div>
 
-<h3 class="has-text-centered is-size-3 has-text-weight-bold {% if totais|get_item:"total" > 48 %} has-text-primary {% else %} has-text-danger {% endif %}">
-    Nota Final: {% with total=totais|get_item:"total" %} {{ total.acertos }} / {{ total.total }} {% endwith %} Pontos
-</h3>
 
 
 {% endblock %}

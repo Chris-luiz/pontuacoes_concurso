@@ -28,7 +28,8 @@
                 <th class="is-light">Número</th>
                 <th class="is-light has-text-centered">Resposta Correta</th>
                 <th class="is-light has-text-centered">Resposta Inserida</th>
-                <th class="is-light has-text-centered">Valor</th>
+                <th class="is-light has-text-centered">Anulada?</th>
+                <th class="is-light has-text-centered">Resultado</th>
                 <th class="is-light has-text-centered">Ações</th>
             </tr>
         </thead>
@@ -62,8 +63,10 @@
                                 </select>
                             </div>
                         </td>
-
-                        <td class="has-text-centered td-valor" data-id="{{ questao.id }}""> 
+                        <td class="has-text-centered td-anulada"> 
+                            <input type="checkbox" class="checkbox" name="anulada_{{ questao.id }}" {% if questao.anulada %} checked {% endif %} >
+                        </td>
+                        <td class="has-text-centered td-valor" data-id="{{ questao.id }}"> 
                             <span class="tag {% if questao.valor %} is-primary {% else %} is-danger {% endif %}">
                                 {% if questao.valor %} ACERTO {% else %} ERRO {% endif %}
                             </span>
